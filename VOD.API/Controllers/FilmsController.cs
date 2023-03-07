@@ -11,14 +11,13 @@
             _db = dbService;
         }
         [HttpGet]
-        public async Task<IResult> Get(bool freeOnly = false)
+        public async Task<IResult> Get()
         {
             try
             {
                 await _db.Include<Film>();
                 await _db.Include<FilmGenre>();
-                List<FilmDTO>? videos = freeOnly ? await _db.GetAsync<Film, FilmDTO>(c => c.Free.Equals(freeOnly))
-                                                    : await _db.GetAsync<Film, FilmDTO>();
+                List<FilmDTO>? videos = await _db.GetAsync<Film, FilmDTO>();
                 return Results.Ok(videos);
             }
             catch (Exception ex)

@@ -11,27 +11,18 @@
             _db = dbService;
         }
         [HttpGet]
-        public async Task<IResult> Get(bool getCompleteInfo = false)
+        public async Task<IResult> Get()
         {
             try
             {
-                if (getCompleteInfo)
-                {
                     await _db.Include<Genre>();
-                    await _db.Include<FilmGenre>();
-                    var genreFull = await _db.GetAsync<Genre, FullGenreDTO>();
-                    if (genreFull is null)
+                await _db.Include<FilmGenre>();
+                var genres = await _db.GetAsync<Genre, FullGenreDTO>();
+                    if (genres is null)
                     {
                         return Results.NotFound();
                     }
-                    return Results.Ok(genreFull);
-                }
-                var genre = await _db.GetAsync<Genre, GenreDTO>();
-                if (genre is null)
-                {
-                    return Results.NotFound();
-                }
-                return Results.Ok(genre);
+                    return Results.Ok(genres);
             }
             catch (Exception ex)
             {
@@ -40,27 +31,19 @@
         }
 
         [HttpGet("{id}")]
-        public async Task<IResult> Get(int id, bool getCompleteInfo = false)
+        public async Task<IResult> Get(int id)
         {
             try
             {
-                if (getCompleteInfo)
-                {
+
                     await _db.Include<Genre>();
                     await _db.Include<FilmGenre>();
-                    var genreFull = await _db.SingleAsync<Genre, FullGenreDTO>(v => v.Id == id);
-                    if (genreFull is null)
+                    var genre = await _db.SingleAsync<Genre, FullGenreDTO>(v => v.Id == id);
+                    if (genre is null)
                     {
                         return Results.NotFound("No matching id found.");
                     }
-                    return Results.Ok(genreFull);
-                }
-                var genre = await _db.SingleAsync<Genre, GenreDTO>(v => v.Id == id);
-                if (genre is null)
-                {
-                    return Results.NotFound("No matching id found.");
-                }
-                return Results.Ok(genre);
+                    return Results.Ok(genre);
             }
             catch (Exception ex)
             {

@@ -12,20 +12,11 @@ namespace VOD.API.Controllers
             _db = dbService;
         }
         [HttpGet]
-        public async Task<IResult> Get(bool getCompleteInfo = false)
+        public async Task<IResult> Get()
         {
             try
             {
-                if (getCompleteInfo)
-                {
-                    await _db.Include<Director>();
-                    var directorsFull = await _db.GetAsync<Director, FullDirectorDTO>();
-                    if (directorsFull is null)
-                    {
-                        return Results.NotFound();
-                    }
-                    return Results.Ok(directorsFull);
-                }
+
                 var directors = await _db.GetAsync<Director, DirectorDTO>();
                 if (directors is null)
                 {
@@ -41,21 +32,11 @@ namespace VOD.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IResult> Get(int id, bool getCompleteInfo = false)
+        public async Task<IResult> Get(int id)
         {
             try
             {
-                if (getCompleteInfo)
-                {
-                    await _db.Include<Director>();
-                    var directorFull = await _db.SingleAsync<Director, FullDirectorDTO>(v => v.Id == id);
-                    if (directorFull is null)
-                    {
-                        return Results.NotFound("No matching id found.");
-                    }
-                    return Results.Ok(directorFull);
-                }
-                var director = await _db.SingleAsync<Director, DirectorDTO>(v => v.Id == id);
+                var director = await _db.SingleAsync<Director, DirectorDTO>(d => d.Id == id);
                 if (director is null)
                 {
                     return Results.NotFound("No matching id found.");

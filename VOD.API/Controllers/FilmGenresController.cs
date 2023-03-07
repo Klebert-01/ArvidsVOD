@@ -20,12 +20,12 @@ namespace VOD.API.Controllers
         {
             try
             {
-                var videoGenres = await _db.GetAsync<FilmGenre, FilmGenreDTO>();
-                if (videoGenres is null)
+                var filmGenres = await _db.GetAsync<FilmGenre, FilmGenreDTO>();
+                if (filmGenres is null)
                 {
                     return Results.NotFound();
                 }
-                return Results.Ok(videoGenres);
+                return Results.Ok(filmGenres);
             }
             catch (Exception ex)
             {

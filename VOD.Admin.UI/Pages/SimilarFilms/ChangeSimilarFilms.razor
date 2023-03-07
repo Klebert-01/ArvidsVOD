@@ -1,22 +1,21 @@
 ﻿@inject IAdminService AdminService
-<div class="d-xxl-flex justify-content-center">
+<div class="d-xl-flex justify-content-center">
 	<EditForm Model="@CurrentFilm" OnValidSubmit="@OnFormSubmit" class="border border-dark rounded p-3 w-25 shadow-lg">
 		<DataAnnotationsValidator />
 		<ValidationSummary />
-		<h4>@Page Similar Videos</h4>
+		<h4>@Page Similar films</h4>
 		<div class="mb-3">
 			<InputText id="title" class="form-control" @bind-Value="CurrentFilm.Title" disabled placeholder="Title"></InputText>
 			<ValidationMessage For="@(() => CurrentFilm.Title)" />
 			@if (!Page.Equals(PageType.Delete))
 			{
 				<div class="m-3">
-					<p>Select videos similar to this <i class="fa-solid fa-arrow-turn-up"></i></p>
-					<p>In the list down here <i class="fa-solid fa-arrow-turn-down"></i></p>
+					<p>Select similar films<i class="fa-solid fa-arrow-turn-up"></i></p>
 				</div>
 
 				<div class="mb-3">
-					<InputSelect id="similarvideos" class="form-control" @bind-Value="SimilarFilmsIds">
-						<option value="0" disabled>Select similar videos (hold ctrl to select many)</option>
+					<InputSelect id="similarfilm" class="form-control" @bind-Value="SimilarFilmsIds">
+						<option value="0" disabled>Select similar films (hold ctrl to select many)</option>
 						@foreach (var vid in AllFilms)
 						{
 							<option value="@vid.Id">@vid.Title</option>
