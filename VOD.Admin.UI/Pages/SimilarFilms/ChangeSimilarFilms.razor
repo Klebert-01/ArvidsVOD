@@ -1,0 +1,113 @@
+﻿@inject IAdminService AdminService
+<div class="d-xxl-flex justify-content-center">
+	<EditForm Model="@CurrentFilm" OnValidSubmit="@OnFormSubmit" class="border border-dark rounded p-3 w-25 shadow-lg">
+		<DataAnnotationsValidator />
+		<ValidationSummary />
+		<h4>@Page Similar Videos</h4>
+		<div class="mb-3">
+			<InputText id="title" class="form-control" @bind-Value="CurrentFilm.Title" disabled placeholder="Title"></InputText>
+			<ValidationMessage For="@(() => CurrentFilm.Title)" />
+			@if (!Page.Equals(PageType.Delete))
+			{
+				<div class="m-3">
+					<p>Select videos similar to this <i class="fa-solid fa-arrow-turn-up"></i></p>
+					<p>In the list down here <i class="fa-solid fa-arrow-turn-down"></i></p>
+				</div>
+
+				<div class="mb-3">
+					<InputSelect id="similarvideos" class="form-control" @bind-Value="SimilarFilmsIds">
+						<option value="0" disabled>Select similar videos (hold ctrl to select many)</option>
+						@foreach (var vid in AllFilms)
+						{
+							<option value="@vid.Id">@vid.Title</option>
+						}
+					</InputSelect>
+					<ValidationMessage For="@(() => AllFilms)" />
+				</div>
+
+			}
+		</div>
+
+		<button type="submit" class="btn px-3 btn-outline-@(Page.Equals(PageType.Delete) ? "danger" : "primary")">@Page</button>
+	</EditForm>
+</div>
+
+@code {
+	[Parameter] public FilmDTO CurrentFilm { get; set; } = new();
+	[Parameter] public List<FilmDTO> SimilarFilms { get; set; } = new();
+	[Parameter] public string Page { get; set; } = string.Empty;
+	[Parameter] public EventCallback<string> OnChange { get; set; }
+	public List<FilmDTO> AllFilms { get; set; } = new();
+	public List<SimilarFilmDTO> AllSimilarFilms { get; set; } = new();
+	public int[] SimilarFilmsIds { get; set; } = new int[] { };
+
+	private async Task OnFormSubmit()
+	{
+		try
+		{
+			List<SimilarFilmDTO> similarFilmsToAdd = new();
+			List<SimilarFilmDTO> similarFilmsToRemove = new();
+			foreach (var id in SimilarFilmsIds)
+			{
+				if (!SimilarFilms.Select(s => s.Id).ToList().Contains(id))
+				{
+					similarFilmsToAdd.Add(new SimilarFilmDTO
+						{
+							FilmId = CurrentFilm.Id,
+							SimilarFilmId = id
+						});
+				}
+			}
+			foreach (var simVid in SimilarFilms)
+			{
+				if (!SimilarFilmsIds.Contains(simVid.Id))
+				{
+					var tempSimilarFilm = new SimilarFilmDTO
+						{
+							FilmId = CurrentFilm.Id,
+							SimilarFilmId = simVid.Id
+						};
+					var reversedSimilarFilm = new SimilarFilmDTO
+						{
+							FilmId = simVid.Id,
+							SimilarFilmId = CurrentFilm.Id
+						};
+					if (AllSimilarFilms.Where(s => s.FilmId.Equals(reversedSimilarFilm.FilmId)
+													&& s.SimilarFilmId.Equals(reversedSimilarFilm.SimilarFilmId)).Any())
+					{
+						similarFilmsToRemove.Add(reversedSimilarFilm);
+					}
+					else similarFilmsToRemove.Add(tempSimilarFilm);
+
+				}
+			}
+			if (Page.Equals(PageType.Edit))
+			{
+				foreach (var dto in similarFilmsToRemove)
+				{
+					await AdminService.DeleteRefAsync<SimilarFilmDTO>("SimilarFilms", dto);
+				}
+
+				foreach (var dto in similarFilmsToAdd)
+				{
+					await AdminService.CreateRefAsync<SimilarFilmDTO>("SimilarFilms", dto);
+				}
+				await OnChange.InvokeAsync("");
+			}
+			else if (Page.Equals(PageType.Delete))
+
+				await OnChange.InvokeAsync("");
+		}
+		catch
+		{
+			await OnChange.InvokeAsync("Something went wrong.");
+		}
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		AllFilms = await AdminService.GetAsync<FilmDTO>("Films");
+		SimilarFilmsIds = SimilarFilms.Select(s => s.Id).ToArray();
+		AllSimilarFilms = await AdminService.GetAsync<SimilarFilmDTO>("SimilarFilms");
+	}
+}

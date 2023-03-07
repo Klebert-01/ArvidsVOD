@@ -1,0 +1,24 @@
+﻿@page "/{Route}"
+
+<h3>@Route</h3>
+
+@if (Route.Equals(Routes.Directors))
+{
+    <DirectorsPortal />
+}
+else if (Route.Equals(Routes.FilmGenres))
+{
+    <FilmGenresPortal />
+}
+else if (Route.Equals(Routes.Films))
+{
+    <FilmsPortal />
+}
+else if (Route.Equals(Routes.Genres))
+{
+    <GenresPortal />
+}
+else if (Route.Equals(Routes.SimilarFilms))
+{
+    <SimilarFilmsPortal />
+}

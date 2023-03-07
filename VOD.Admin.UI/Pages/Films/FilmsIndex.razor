@@ -1,0 +1,42 @@
+﻿<table class="table mt-2">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Director</th>
+            <th>Description</th>
+            <th>Released</th>
+            <th>FilmUrl</th>
+            <th>Free</th>
+            <th>Genre</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Title</td>
+                <td>@item.Director.Name</td>
+                <td>@item.Description.Truncate(30)</td>
+                <td>@item.Released.ToShortDateString()</td>
+                <td>@item.FilmUrl</td>
+                <td>@(item.Free ? "Free" : "")</td>
+                <td>
+                    <div class="d-flex me-1 justify-content-end">
+                        <button class="btn btn-outline-primary rounded-0 me-1" @onclick="@(() => OnClick.InvokeAsync(new ClickModel(PageType.Edit, item.Id)))">Edit</button>
+                        <button class="btn btn-outline-danger rounded-0" @onclick="@(() => OnClick.InvokeAsync(new ClickModel(PageType.Delete, item.Id)))">Delete</button>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@code {
+    [Parameter] public List<FilmDTO> Model { get; set; } = new();
+    [Parameter] public EventCallback<ClickModel> OnClick { get; set; }
+    public List<GenreDTO> AllGenres { get; set; } = new();
+
+}

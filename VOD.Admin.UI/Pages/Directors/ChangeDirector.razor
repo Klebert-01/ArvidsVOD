@@ -1,0 +1,56 @@
+﻿@inject IAdminService AdminService
+
+<div class="d-xl-flex justify-content-center">
+    <EditForm Model="@Model" OnValidSubmit="@OnFormSubmit" class="mb-5 border border-1 border-secondary p-2 w-25">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <h4>@Page Director</h4>
+        <div class="mb-3">
+            @if (Page.Equals(PageType.Delete))
+            {
+                <InputText id="title" class="form-control" @bind-Value="Model.Name" disabled placeholder="Name"></InputText>
+            }
+            @if (Page.Equals(PageType.Edit) || Page.Equals(PageType.Create))
+            {
+                <InputText id="title" class="form-control" @bind-Value="Model.Name" placeholder="Name"></InputText>
+            }
+            <ValidationMessage For="@(() => Model.Name)" />
+        </div>
+
+        <button type="submit" class="btn btn-@(Page.Equals(PageType.Delete) ? "danger" : "primary")rounded-0">@Page</button>
+    </EditForm>
+</div>
+
+@code {
+    [Parameter] public DirectorDTO Model { get; set; } = new();
+    [Parameter] public string Page { get; set; } = string.Empty;
+    [Parameter] public EventCallback<string> OnChange { get; set; }
+
+    async Task OnFormSubmit()
+    {
+        try
+        {
+            if (Page.Equals(PageType.Create))
+            {
+                await AdminService.CreateAsync<CreateDirectorDTO>("Directors", new CreateDirectorDTO
+                    {
+                        Name = Model.Name
+                    });
+            }
+            else if (Page.Equals(PageType.Edit))
+            {
+                await AdminService.EditAsync<DirectorDTO>($"Directors/{Model.Id}", Model);
+
+            }
+            else if (Page.Equals(PageType.Delete))
+                await AdminService.DeleteAsync<DirectorDTO>($"Directors/{Model.Id}");
+
+            await OnChange.InvokeAsync("");
+        }
+        catch
+        {
+            await OnChange.InvokeAsync("error");
+        }
+    }
+
+}

@@ -1,0 +1,58 @@
+﻿@inject IAdminService AdminService
+<div class="d-xl-flex justify-content-center">
+	<EditForm Model="@Model" OnValidSubmit="@OnFormSubmit" class="mb-5 border border-1 border-secondary p-2 w-25">
+		<DataAnnotationsValidator />
+		<ValidationSummary />
+		<h4>@Page Genre/Film connection</h4>
+		<div class="mb-3">
+			@if (Page.Equals(PageType.Delete))
+			{
+					<InputNumber id="filmid" class="form-control me-2" @bind-Value="Model.FilmId" disabled placeholder="Film Id"></InputNumber>
+					<ValidationMessage For="@(() => Model.FilmId)" />
+
+					<InputNumber id="title" class="form-control me-2" @bind-Value="Model.GenreId" disabled placeholder="Genre Id"></InputNumber>
+					<ValidationMessage For="@(() => Model.GenreId)" />
+
+			}
+			@if (Page.Equals(PageType.Create))
+			{
+					<InputNumber id="videoid" class="form-control me-2" @bind-Value="Model.FilmId" placeholder="Film Id"></InputNumber>
+					<ValidationMessage For="@(() => Model.FilmId)" />
+
+					<InputNumber id="title" class="form-control me-2" @bind-Value="Model.GenreId" placeholder="Genre Id"></InputNumber>
+					<ValidationMessage For="@(() => Model.GenreId)" />
+			}
+		</div>
+
+		<button type="submit" class="btn px-3 btn-outline-@(Page.Equals(PageType.Delete) ? "danger" : "primary")">@Page</button>
+	</EditForm>
+</div>
+
+@code {
+	[Parameter] public FilmGenreDTO Model { get; set; } = new();
+	[Parameter] public string Page { get; set; } = string.Empty;
+	[Parameter] public EventCallback<string> OnChange { get; set; }
+
+	private async Task OnFormSubmit()
+	{
+		try
+		{
+			if (Page.Equals(PageType.Create))
+			{
+				await AdminService.CreateRefAsync<FilmGenreDTO>("FilmGenres", new FilmGenreDTO
+					{
+						FilmId = Model.FilmId,
+						GenreId = Model.GenreId
+					});
+			}
+			else if (Page.Equals(PageType.Delete))
+				await AdminService.DeleteRefAsync<FilmGenreDTO>($"FilmGenres", Model);
+
+			await OnChange.InvokeAsync("");
+		}
+		catch
+		{
+			await OnChange.InvokeAsync("error");
+		}
+	}
+}

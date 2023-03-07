@@ -1,0 +1,75 @@
+﻿@inject IAdminService AdminService
+
+@if (!String.IsNullOrWhiteSpace(Alert))
+{
+	<div class="d-flex m-3">
+		<div class="alert alert-danger alert-dismissible fade show" role="alert">
+			<strong>@Alert</strong>
+			<button type="button" @onclick="CloseAlert" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+	</div>
+}
+
+@if (Navigation == PageType.Create)
+{
+	<ChangeFilms Page="@Navigation" OnChange="OnChange"></ChangeFilms>
+}
+
+@if (Navigation == PageType.Edit || Navigation == PageType.Delete)
+{
+	<ChangeFilms Page="@Navigation" OnChange="OnChange" Model="Film"></ChangeFilms>
+}
+
+<div class="d-flex m-3">
+	<a href="/" class="btn btn-outline-secondary rounded-0 me-1">Home</a>
+	<button type="button" class="btn btn-outline-primary rounded-0 me-1" @onclick="()=>ChangePageType(PageType.Index)">Index</button>
+	<button type="button" class="btn btn-outline-primary rounded-0" @onclick="()=>ChangePageType(PageType.Create)">Create</button>
+</div>
+
+<FilmsIndex OnClick="OnClick" Model="Model"></FilmsIndex>
+
+@code {
+	public string Alert { get; set; } = string.Empty;
+	public string Navigation { get; set; } = PageType.Index;
+	public List<FilmDTO> Model { get; set; } = new();
+	public FilmDTO Film { get; set; } = new();
+
+	public void ChangePageType(string pageType)
+	{
+		Navigation = pageType;
+	}
+
+	public void CloseAlert()
+	{
+		Alert = "";
+	}
+
+	async Task OnClick(ClickModel model)
+	{
+		if (model.pageType.Equals(PageType.Edit) || model.pageType.Equals(PageType.Delete))
+		{
+			Film = await AdminService.SingleAsync<FilmDTO>($"Films/{model.id}") ?? new();
+		}
+		ChangePageType(model.pageType);
+	}
+
+	async Task OnChange(string alert)
+	{
+		try
+		{
+			Alert = alert;
+			Model = await AdminService.GetAsync<FilmDTO>("Films");
+			ChangePageType(PageType.Index);
+		}
+		catch
+		{
+			Alert = "Error";
+		}
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		Alert = "";
+		Model = await AdminService.GetAsync<FilmDTO>("Films");
+	}
+}

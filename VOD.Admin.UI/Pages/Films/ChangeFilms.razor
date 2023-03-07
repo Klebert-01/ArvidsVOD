@@ -1,0 +1,135 @@
+﻿@using System.Text.Json;
+@inject IAdminService AdminService
+<div class="d-xl-flex justify-content-center">
+	<EditForm Model="@Model" OnValidSubmit="@OnFormSubmit" class="mb-5 border border-1 border-secondary p-2 w-25">
+		<DataAnnotationsValidator />
+		<ValidationSummary />
+		<h4>@Page Video</h4>
+		<div class="mb-3">
+			@if (Page.Equals(PageType.Delete))
+			{
+				<InputText id="title" class="form-control me-2" @bind-Value="Model.Title" disabled placeholder="Title"></InputText>
+			}
+			@if (Page.Equals(PageType.Edit) || Page.Equals(PageType.Create))
+			{
+				<InputText id="title" class="form-control me-2" @bind-Value="Model.Title" placeholder="Title"></InputText>
+			}
+			<ValidationMessage For="@(() => Model.Title)" />
+		</div>
+		@if (!Page.Equals(PageType.Delete))
+		{
+			<div class="mb-3">
+				<InputText id="description" class="form-control" @bind-Value="Model.Description" placeholder="Description"></InputText>
+				<ValidationMessage For="@(() => Model.Description)" />
+			</div>
+
+			<div class="mb-3">
+				<InputText id="url" class="form-control" @bind-Value="Model.FilmUrl" placeholder="FilmUrl"></InputText>
+				<ValidationMessage For="@(() => Model.FilmUrl)" />
+			</div>
+
+
+			<div class="mb-3">
+				<InputDate id="description" class="form-control" @bind-Value="Model.Released" placeholder="Release Date"></InputDate>
+				<ValidationMessage For="@(() => Model.Released)" />
+			</div>
+
+			<div class="mb-3">
+				<InputSelect id="director" class="form-control" @bind-Value="Model.DirectorId">
+					<option value="0" disabled class="border border-bottom">Choose Director</option>
+					@foreach (var director in Directors)
+					{
+						<option value="@director.Id">@director.Name</option>
+					}
+				</InputSelect>
+				<ValidationMessage For="@(() => Model.DirectorId)" />
+			</div>
+
+			<div class="mb-3">
+				<InputSelect id="genre" class="form-control" @bind-Value="GenreIds">
+					<option value="0" disabled>Choose Genres (hold ctrl to select many)</option>
+					@foreach (var gen in AllGenres)
+					{
+						<option value="@gen.Id">@gen.Name</option>
+					}
+				</InputSelect>
+				<ValidationMessage For="@(() => GenreIds)" />
+			</div>
+			<div class="mb-3">
+				<label>
+					<InputCheckbox @bind-Value="Model.Free" />
+					Free Film
+				</label>
+			</div>
+		}
+		<button type="submit" class="btn px-3 btn-outline-@(Page.Equals(PageType.Delete) ? "danger" : "primary")">@Page</button>
+	</EditForm>
+</div>
+
+@code {
+	[Parameter] public FilmDTO Model { get; set; } = new();
+	[Parameter] public string Page { get; set; } = "";
+	[Parameter] public EventCallback<string> OnChange { get; set; }
+	public List<DirectorDTO> Directors { get; set; } = new();
+	public List<GenreDTO> AllGenres { get; set; } = new();
+	public int[] GenreIds { get; set; } = new int[] { };
+
+
+	private async Task OnFormSubmit()
+	{
+		try
+		{
+			var selectedGenres = AllGenres.Where(g => GenreIds.Contains(g.Id)).ToList();
+			if (Page.Equals(PageType.Create))
+			{
+				var response = await AdminService.CreateAsync<CreateFilmDTO>("Films", new CreateFilmDTO
+					{
+						Title = Model.Title,
+						FilmUrl = Model.FilmUrl,
+						Description = Model.Description,
+						Released = Model.Released,
+						DirectorId = Model.DirectorId
+					});
+				var tempDTO = await response.Content.ReadFromJsonAsync<EditFilmDTO>();
+				response.Dispose();
+				tempDTO.Genres = selectedGenres;
+				await AdminService.EditAsync($"Films/{tempDTO.Id}", tempDTO);
+			}
+			else if (Page.Equals(PageType.Edit))
+			{
+				var tempDTO = new EditFilmDTO
+					{
+						Id = Model.Id,
+						Title = Model.Title,
+						FilmUrl = Model.FilmUrl,
+						Description = Model.Description,
+						Released = Model.Released,
+						DirectorId = Model.DirectorId,
+						Genres = selectedGenres
+					};
+				await AdminService.EditAsync<EditFilmDTO>($"Films/{Model.Id}", tempDTO);
+			}
+			else if (Page.Equals(PageType.Delete))
+				await AdminService.DeleteAsync<FilmDTO>($"Films/{Model.Id}");
+
+			await OnChange.InvokeAsync("");
+			UpdateSelectedGenres();
+		}
+		catch
+		{
+			await OnChange.InvokeAsync("Something went wrong.");
+		}
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		Directors = await AdminService.GetAsync<DirectorDTO>("Directors");
+		AllGenres = await AdminService.GetAsync<GenreDTO>("Genres");
+		UpdateSelectedGenres();
+	}
+
+	protected void UpdateSelectedGenres()
+	{
+		GenreIds = Model.Genres.Select(m => m.Id).ToArray();
+	}
+}
