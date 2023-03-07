@@ -58,18 +58,18 @@
 						});
 				}
 			}
-			foreach (var simVid in SimilarFilms)
+			foreach (var simFilm in SimilarFilms)
 			{
-				if (!SimilarFilmsIds.Contains(simVid.Id))
+				if (!SimilarFilmsIds.Contains(simFilm.Id))
 				{
 					var tempSimilarFilm = new SimilarFilmDTO
 						{
 							FilmId = CurrentFilm.Id,
-							SimilarFilmId = simVid.Id
+							SimilarFilmId = simFilm.Id
 						};
 					var reversedSimilarFilm = new SimilarFilmDTO
 						{
-							FilmId = simVid.Id,
+							FilmId = simFilm.Id,
 							SimilarFilmId = CurrentFilm.Id
 						};
 					if (AllSimilarFilms.Where(s => s.FilmId.Equals(reversedSimilarFilm.FilmId)
