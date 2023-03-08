@@ -16,42 +16,42 @@ public class SimilarFilmsController : ControllerBase
     {
         try
         {
-            var simVids = await _db.GetAsync<SimilarFilm, SimilarFilmDTO>();
-            if (simVids is null)
+            var simFilms = await _db.GetAsync<SimilarFilm, SimilarFilmDTO>();
+            if (simFilms is null)
             {
                 return Results.NotFound();
             }
-            return Results.Ok(simVids);
+            return Results.Ok(simFilms);
         }
         catch (Exception ex)
         {
             return Results.BadRequest(ex.Message);
         }
     }
-    [HttpGet("{videoId}")]
-    public async Task<IResult> Get(int videoId, bool freeOnly = false)
+    [HttpGet("{filmId}")]
+    public async Task<IResult> Get(int filmId)
     {
         try
         {
             await _db.Include<Film>();
             await _db.Include<FilmGenre>();
-            var videos = freeOnly ? await _db.GetAsync<Film, FilmDTO>(c => c.Free.Equals(freeOnly))
-                                                : await _db.GetAsync<Film, FilmDTO>();
+            var films = await _db.GetAsync<Film, FilmDTO>();
+                                                
 
-            var simVidQuery = from vid in videos
-                              from sim in vid.SimilarFilms
-                              where sim.FilmId == videoId || sim.SimilarFilmId == videoId
+            var simFilmQuery = from film in films
+                              from sim in film.SimilarFilms
+                              where sim.ParentFilmId == filmId || sim.SimilarFilmId == filmId
                               select sim;
 
-            var resultVideos = new List<FilmDTO>();
-            foreach (var simVideo in simVidQuery)
+            var resultfilms = new List<FilmDTO>();
+            foreach (var simFilm in simFilmQuery)
             {
-                resultVideos.AddRange(videos.Where(v => v.Id.Equals(simVideo.FilmId)));
-                resultVideos.AddRange(videos.Where(v => v.Id.Equals(simVideo.SimilarFilmId)));
+                resultfilms.AddRange(films.Where(v => v.Id.Equals(simFilm.ParentFilmId)));
+                resultfilms.AddRange(films.Where(v => v.Id.Equals(simFilm.SimilarFilmId)));
             }
 
-            resultVideos.RemoveAll(v => v.Id.Equals(videoId));
-            return Results.Ok(resultVideos.ToHashSet().ToList());
+            resultfilms.RemoveAll(v => v.Id.Equals(filmId));
+            return Results.Ok(resultfilms.ToHashSet().ToList());
         }
         catch (Exception ex)
         {

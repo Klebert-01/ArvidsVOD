@@ -52,7 +52,7 @@
 				{
 					similarFilmsToAdd.Add(new SimilarFilmDTO
 						{
-							FilmId = CurrentFilm.Id,
+							ParentFilmId = CurrentFilm.Id,
 							SimilarFilmId = id
 						});
 				}
@@ -63,15 +63,15 @@
 				{
 					var tempSimilarFilm = new SimilarFilmDTO
 						{
-							FilmId = CurrentFilm.Id,
+							ParentFilmId = CurrentFilm.Id,
 							SimilarFilmId = simFilm.Id
 						};
 					var reversedSimilarFilm = new SimilarFilmDTO
 						{
-							FilmId = simFilm.Id,
+							ParentFilmId = simFilm.Id,
 							SimilarFilmId = CurrentFilm.Id
 						};
-					if (AllSimilarFilms.Where(s => s.FilmId.Equals(reversedSimilarFilm.FilmId)
+					if (AllSimilarFilms.Where(s => s.ParentFilmId.Equals(reversedSimilarFilm.ParentFilmId)
 													&& s.SimilarFilmId.Equals(reversedSimilarFilm.SimilarFilmId)).Any())
 					{
 						similarFilmsToRemove.Add(reversedSimilarFilm);

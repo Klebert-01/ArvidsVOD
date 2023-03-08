@@ -17,8 +17,8 @@
             {
                 await _db.Include<Film>();
                 await _db.Include<FilmGenre>();
-                List<FilmDTO>? videos = await _db.GetAsync<Film, FilmDTO>();
-                return Results.Ok(videos);
+                List<FilmDTO>? films = await _db.GetAsync<Film, FilmDTO>();
+                return Results.Ok(films);
             }
             catch (Exception ex)
             {
@@ -33,8 +33,8 @@
             {
                 await _db.Include<Film>();
                 await _db.Include<FilmGenre>();
-                var video = await _db.SingleAsync<Film, FilmDTO>(v => v.Id == id);
-                return Results.Ok(video);
+                var film = await _db.SingleAsync<Film, FilmDTO>(f => f.Id == id);
+                return Results.Ok(film);
             }
             catch (Exception ex)
             {
@@ -51,13 +51,13 @@
                 {
                     return Results.BadRequest();
                 }
-                var video = await _db.AddAsync<Film, CreateFilmDTO>(dto);
+                var film = await _db.AddAsync<Film, CreateFilmDTO>(dto);
                 var success = await _db.SaveChangesAsync();
                 if (success is false)
                 {
                     return Results.BadRequest();
                 }
-                return Results.Created(_db.GetURI(video), video);
+                return Results.Created(_db.GetURI(film), film);
             }
             catch (Exception ex)
             {
@@ -78,7 +78,7 @@
                 {
                     return Results.BadRequest($"URL Id: {id} is not equal to Entity Id: {dto.Id}");
                 }
-                var exists = await _db.AnyAsync<Film>(v => v.Id.Equals(id));
+                var exists = await _db.AnyAsync<Film>(f => f.Id.Equals(id));
                 if (exists is false)
                 {
                     return Results.NotFound("Could not find an Entity with id: " + id);
