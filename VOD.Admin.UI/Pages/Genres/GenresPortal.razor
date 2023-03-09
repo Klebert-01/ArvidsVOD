@@ -23,9 +23,9 @@
 
 @*Home, Index, Create-buttons*@
 <div class="d-flex me-1">
-    <a href="/" class="btn btn-outline-secondary rounded-0 me-1">Home</a>
-    <button type="button" class="btn btn-outline-primary rounded-0 me-1" @onclick="()=>ChangePageType(PageType.Index)">Index</button>
-    <button type="button" class="btn btn-outline-success rounded-0" @onclick="()=>ChangePageType(PageType.Create)">Create</button>
+    <a href="/" class="btn btn-outline-secondary rounded-0 me-1 btn-lg">Home</a>
+    <button type="button" class="btn btn-outline-primary rounded-0 me-1 btn-lg" @onclick="()=>ChangePageType(PageType.Index)">Index</button>
+    <button type="button" class="btn btn-outline-success rounded-0 btn-lg" @onclick="()=>ChangePageType(PageType.Create)">Create</button>
 </div>
 
 <GenresIndex OnClick="OnClick" Model="Model"></GenresIndex>

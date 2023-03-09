@@ -1,0 +1,25 @@
+﻿.container {
+    background-color: white;
+    padding: 20px;
+    margin: 0 auto;
+    background-image: url('css/images/theater.jpg');
+    background-size: cover;
+    background-position:bottom center;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+h1, h2 {
+    text-align:  center;
+    color: white;
+    background-color: black;
+}
+
+
+/*
+.indexbild{
+    max-width: 800px;
+}
+*/

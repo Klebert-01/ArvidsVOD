@@ -16,7 +16,9 @@
 }
 
 <div class="d-flex m-3">
-	<button type="button" class="btn btn-outline-primary rounded-0 me-1" @onclick="()=>ChangePageType(PageType.Index)">Index</button>
+	<a href="/" class="btn btn-outline-secondary rounded-0 me-1 btn-lg">Home</a>
+
+	<button type="button" class="btn btn-outline-primary rounded-0 me-1 btn-lg" @onclick="()=>ChangePageType(PageType.Index)">Index</button>
 </div>
 
 <SimilarFilmsIndex OnClick="OnClick" Model="AllFilms"></SimilarFilmsIndex>
