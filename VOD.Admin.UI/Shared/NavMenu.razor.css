@@ -4,11 +4,14 @@
 
 .top-row {
     height: 3.5rem;
-    background-color: rgba(0,0,0,0.4);
+    /*background-color: rgba(0,0,0,0.4);*/
+    background-color: darkolivegreen;
+    font-weight:bold;
+
 }
 
 .navbar-brand {
-    font-size: 1.1rem;
+    font-size: 1.5rem;
 }
 
 .oi {
@@ -19,7 +22,7 @@
 }
 
 .nav-item {
-    font-size: 0.9rem;
+    font-size: 1.2rem;
     padding-bottom: 0.5rem;
 }
 
@@ -41,13 +44,15 @@
     }
 
 .nav-item ::deep a.active {
-    background-color: rgba(255,255,255,0.25);
-    color: white;
+    /*background-color: rgba(255,255,255,0.25);*/
+    background-color: blanchedalmond;
+    color: black;
 }
 
 .nav-item ::deep a:hover {
-    background-color: rgba(255,255,255,0.1);
-    color: white;
+    /*background-color: rgba(255,255,255,0.1);*/
+    background-color: antiquewhite;
+    color: black;
 }
 
 @media (min-width: 641px) {
@@ -65,4 +70,5 @@
         height: calc(100vh - 3.5rem);
         overflow-y: auto;
     }
+    
 }
