@@ -2,8 +2,5 @@
 
 public partial class Portal
 {
-    [Parameter]
-    public string Route { get; set; } = string.Empty;
-
-
+    [Parameter] public string Route { get; set; } = string.Empty;
 }

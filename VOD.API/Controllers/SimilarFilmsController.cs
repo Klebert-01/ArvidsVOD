@@ -50,7 +50,7 @@ public class SimilarFilmsController : ControllerBase
                 resultfilms.AddRange(films.Where(v => v.Id.Equals(simFilm.SimilarFilmId)));
             }
 
-            resultfilms.RemoveAll(v => v.Id.Equals(filmId));
+            resultfilms.RemoveAll(f => f.Id.Equals(filmId));
             return Results.Ok(resultfilms.ToHashSet().ToList());
         }
         catch (Exception ex)

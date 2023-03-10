@@ -86,7 +86,7 @@
                 var allGenres = await _db.GetAsync<FilmGenre, FilmGenreDTO>();
                 _db.ClearTracker();  //kolla på nedan clear tracker
 
-                allGenres.Where(vg => vg.FilmId.Equals(dto.Id)).ToList().ForEach(vg => _db.Delete<FilmGenre, FilmGenreDTO>(vg));   // här är nog referenceentity problem
+                allGenres.Where(fg => fg.FilmId.Equals(dto.Id)).ToList().ForEach(fg => _db.Delete<FilmGenre, FilmGenreDTO>(fg));
                 await _db.SaveChangesAsync();
                 _db.Update<Film, EditFilmDTO>(dto, dto.Id);
                 var success = await _db.SaveChangesAsync();

@@ -38,7 +38,7 @@
 
                     await _db.Include<Genre>();
                     await _db.Include<FilmGenre>();
-                    var genre = await _db.SingleAsync<Genre, FullGenreDTO>(v => v.Id == id);
+                    var genre = await _db.SingleAsync<Genre, FullGenreDTO>(g => g.Id == id);
                     if (genre is null)
                     {
                         return Results.NotFound("No matching id found.");
@@ -87,7 +87,7 @@
                 {
                     return Results.BadRequest($"URL Id: {id} is not equal to Entity Id: {dto.Id}");
                 }
-                var exists = await _db.AnyAsync<Genre>(v => v.Id.Equals(id));
+                var exists = await _db.AnyAsync<Genre>(g => g.Id.Equals(id));
                 if (exists is false)
                 {
                     return Results.NotFound("Could not find an Entity with id: " + id);
