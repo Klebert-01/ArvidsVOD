@@ -5,7 +5,7 @@
             <th>Title</th>
             <th>Director</th>
             <th>Description</th>
-            <th>Released</th>
+            <th>Release</th>
             <th>FilmUrl</th>
             <th>Free</th>
         </tr>
@@ -18,7 +18,7 @@
                 <td>@item.Title</td>
                 <td>@item.Director.Name</td>
                 <td>@item.Description.Truncate(60)</td>
-                <td>@item.Released.ToShortDateString()</td>
+                <td>@item.Released.ToString().Substring(0,4)</td>
                 <td>@item.FilmUrl</td>
                 <td>@(item.Free ? "Free" : "")</td>
                 <td>
