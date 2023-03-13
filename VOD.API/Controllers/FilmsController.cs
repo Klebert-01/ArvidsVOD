@@ -84,7 +84,7 @@
                     return Results.NotFound("Could not find an Entity with id: " + id);
                 }
                 var allGenres = await _db.GetAsync<FilmGenre, FilmGenreDTO>();
-                _db.ClearTracker();  //kolla på nedan clear tracker
+                _db.ClearTracker();
 
                 allGenres.Where(fg => fg.FilmId.Equals(dto.Id)).ToList().ForEach(fg => _db.Delete<FilmGenre, FilmGenreDTO>(fg));
                 await _db.SaveChangesAsync();

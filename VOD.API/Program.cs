@@ -21,7 +21,7 @@ builder.Services.AddCors(policy =>
     );
 });
 
-//tror delen addjsonoptions hjälper att undvika cirkulärreferenser
+
 builder.Services.AddControllers().AddJsonOptions(o => o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

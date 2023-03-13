@@ -4,10 +4,8 @@
 
 .top-row {
     height: 3.5rem;
-    /*background-color: rgba(0,0,0,0.4);*/
     background-color: darkred;
     font-weight:bold;
-
 }
 
 .navbar-brand {
@@ -44,13 +42,11 @@
     }
 
 .nav-item ::deep a.active {
-    /*background-color: rgba(255,255,255,0.25);*/
     background-color: blanchedalmond;
     color: black;
 }
 
 .nav-item ::deep a:hover {
-    /*background-color: rgba(255,255,255,0.1);*/
     background-color: antiquewhite;
     color: black;
 }
