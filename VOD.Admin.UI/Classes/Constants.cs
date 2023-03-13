@@ -8,8 +8,7 @@ public static class Routes
     public static string Genres = "Genres";
     public static string SimilarFilms = "SimilarFilms";
 
-    // kan nog skita i den här, kommer inte göra någon inloggning
-    public static string Register = "Register";
+    //public static string Register = "Register";
 }
 
 public static class PageType
